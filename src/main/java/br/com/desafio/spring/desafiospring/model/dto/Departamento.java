@@ -1,4 +1,4 @@
-package br.com.desafio.spring.desafiospring.model;
+package br.com.desafio.spring.desafiospring.model.dto;
 
 import java.math.BigDecimal;
 
@@ -12,7 +12,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Departamento {
-
+	
 	private BigDecimal id;
 	private String nome;
 }

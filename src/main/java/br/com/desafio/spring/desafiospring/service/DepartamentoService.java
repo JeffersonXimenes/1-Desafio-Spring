@@ -1,23 +1,39 @@
 package br.com.desafio.spring.desafiospring.service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import br.com.desafio.spring.desafiospring.model.Departamento;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-public class DepartamentoService {
+import br.com.desafio.spring.desafiospring.business.DepartamentoBusiness;
+import br.com.desafio.spring.desafiospring.model.dto.Departamento;
+import br.com.desafio.spring.desafiospring.model.dto.DepartamentoDTO;
+import br.com.desafio.spring.desafiospring.model.entity.DepartamentoEntity;
+import br.com.desafio.spring.desafiospring.repository.DepartamentoRepository;
 
-	private final List<Departamento> departamentos = new ArrayList<>();
+@Service
+public class DepartamentoService extends DepartamentoBusiness {
 	
-	public List<Departamento> listarDepartamentos() {
-		return departamentos;
+	@Autowired
+	private DepartamentoRepository departamentoRepository;
+	
+	public DepartamentoEntity salvarDepartamento(DepartamentoDTO departamentoDTO) throws Exception {
+		isExisteDepartamentoComMesmoNome(departamentoDTO);
+		DepartamentoEntity departamentoEntity = new DepartamentoEntity(departamentoDTO.getNome());
+		
+		return departamentoRepository.save(departamentoEntity);
 	}
 	
-	public void criarDepartamento(Departamento departamentoRequest) {
-		Departamento departamento = new Departamento();
-		departamento.setId(departamentoRequest.getId());
-		departamento.setNome(departamentoRequest.getNome());
-		
-		departamentos.add(departamento);
+	public List<Departamento> listarDepartamentos() {
+		List<DepartamentoEntity> departamentoEntity = departamentoRepository.findAll();
+		return departamentoEntity
+				.stream()
+				.map(this::toResponseDepartamento)
+				.collect(Collectors.toList());
+	}
+	
+	private Departamento toResponseDepartamento(DepartamentoEntity departamentoEntity) {
+		return new Departamento(departamentoEntity.getId(), departamentoEntity.getNome());
 	}
 }
